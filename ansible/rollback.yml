@@ -1,0 +1,11 @@
+---
+- name: Rollback Go application
+  hosts: all
+  become: yes
+  vars:
+    ansistrano_deploy_to: /path/to/remote/app
+    ansistrano_version_dir: versions
+    ansistrano_current_dir: current
+    ansistrano_release_version: "{{ rollback_version }}"
+  roles:
+    - ansistrano.rollback

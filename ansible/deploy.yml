@@ -1,0 +1,29 @@
+---
+- name: Deploy Go application
+  hosts: all
+  become: yes
+  vars:
+    ansistrano_deploy_from: /path/to/local/release
+    ansistrano_deploy_to: /path/to/remote/app
+    ansistrano_version_dir: versions
+    ansistrano_current_dir: current
+    ansistrano_release_version: "{{ lookup('pipe', 'date -u +%Y%m%d%H%M%S') }}"
+    ansistrano_keep_releases: 5
+    ansistrano_shared_paths:
+      - logs
+    ansistrano_git_repo: https://github.com/username/repository
+    ansistrano_git_branch: main
+    ansistrano_git_identity_key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
+  tasks:
+    - name: Ensure shared paths exist
+      file:
+        path: "{{ ansistrano_deploy_to }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      with_items: "{{ ansistrano_shared_paths }}"
+
+  roles:
+    - role: ansistrano.deploy
+      ansistrano_deploy_via: download
+      ansistrano_download_url: https://github.com/username/repository/releases/download/{{ github.sha }}/my-binary
+      ansistrano_before_symlink_shared_tasks_file: hooks/before-symlink-shared.yml

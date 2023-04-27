@@ -1,0 +1,19 @@
+---
+- name: Configure Caddy site
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create Caddy config for my-site.lab.tomhummel.com
+      template:
+        src: templates/caddy/my-site.conf.j2
+        dest: /etc/caddy/conf.d/my-site.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: reload caddy
+
+  handlers:
+    - name: reload caddy
+      systemd:
+        name: caddy
+        state: reloaded
