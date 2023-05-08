@@ -94,21 +94,17 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const mime = require('mime');
           const repo = context.repo;
           const assetName = 'my-binary';
           const assetPath = './my-binary';
-
           const releaseId = core.getInput('release_id');
-          const contentType = mime.getType(assetPath) || 'application/octet-stream';
-
           const fileContent = fs.readFileSync(assetPath);
 
           const { data: asset } = await github.rest.repos.uploadReleaseAsset({
             ...repo,
             release_id: releaseId,
             name: assetName,
-            content_type: contentType,
+            content_type: 'application/octet-stream',
             data: fileContent,
           });
 
