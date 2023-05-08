@@ -61,9 +61,9 @@ jobs:
     - name: Create tag
       run: |
         TAG="${{ steps.date-and-sha.outputs.current_date }}-${{ steps.date-and-sha.outputs.short_sha }}"
-        git config user.name "GitHub Actions"
-        git config user.email "github-actions@users.noreply.github.com"
-        git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+        git config user.name "${GITHUB_ACTOR}"
+        git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git remote set-url origin "https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
         git tag $TAG
         git push origin $TAG
     - name: Create Release
