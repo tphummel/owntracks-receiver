@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
         go-version: ^1.20
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Test
       run: go test -v ./...
 
@@ -27,11 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
         go-version: ^1.20
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Build
       run: go build -v -o my-binary
     - name: Upload binary
@@ -47,7 +47,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Download binary
       uses: actions/download-artifact@v2
       with:
@@ -63,6 +63,7 @@ jobs:
         TAG="${{ steps.date-and-sha.outputs.current_date }}-${{ steps.date-and-sha.outputs.short_sha }}"
         git config user.name "GitHub Actions"
         git config user.email "github-actions@users.noreply.github.com"
+        git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
         git tag $TAG
         git push origin $TAG
     - name: Create Release
@@ -118,7 +119,7 @@ jobs:
   #   if: (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') && github.ref == 'never-run/skipping-for-now'
   #   steps:
   #   - name: Check out code
-  #     uses: actions/checkout@v2
+  #     uses: actions/checkout@v3
   #   - name: Set up Python
   #     uses: actions/setup-python@v2
   #     with:
