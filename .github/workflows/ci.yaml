@@ -84,7 +84,6 @@ jobs:
             draft: false,
             prerelease: false,
           });
-
           core.setOutput('release_id', release.data.id);
     - name: Upload Release Asset
       if: steps.create_release.outputs.release_id != ''
@@ -97,9 +96,8 @@ jobs:
           const repo = context.repo;
           const assetName = 'my-binary';
           const assetPath = './my-binary';
-          const releaseId = core.getInput('release_id');
+          const releaseId = steps.create_release.outputs.release_id;
           const fileContent = fs.readFileSync(assetPath);
-
           const { data: asset } = await github.rest.repos.uploadReleaseAsset({
             ...repo,
             release_id: releaseId,
