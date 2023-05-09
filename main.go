@@ -73,7 +73,7 @@ func handleLocationUpdate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db := initDB("/app/data/owntracks.db")
+	db := initDB("/home/opc/data/owntracks.db")
 	defer db.Close()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
