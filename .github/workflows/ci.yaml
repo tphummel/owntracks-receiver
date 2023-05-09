@@ -33,7 +33,14 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v3
     - name: Build
-      run: CGO_ENABLED=1 GOARCH=arm64 GOOS=linux go build -o owntracks-receiver-linux-arm64
+      run: |
+        sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+        export GOOS=linux
+        export GOARCH=arm64
+        export CGO_ENABLED=1
+        export CC=aarch64-linux-gnu-gcc
+        export CXX=aarch64-linux-gnu-g++
+        go build -o owntracks-receiver-linux-arm64
     - name: Upload binary
       if: github.ref == 'refs/heads/main'
       uses: actions/upload-artifact@v3
