@@ -1,19 +1,23 @@
 ---
-- name: Configure Caddy site
-  hosts: all
-  become: yes
-  tasks:
-    - name: Create Caddy config for my-site.lab.tomhummel.com
-      template:
-        src: templates/caddy/my-site.conf.j2
-        dest: /etc/caddy/conf.d/my-site.conf
-        owner: root
-        group: root
-        mode: '0644'
-      notify: reload caddy
-
-  handlers:
-    - name: reload caddy
-      systemd:
-        name: caddy
-        state: reloaded
+- name: Create systemd unit file for Go web server
+  template:
+    src: templates/systemd.j2
+    dest: /etc/systemd/system/owntracks-receiver.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd units
+- name: Create Caddy config for owntracks.lab.tomhummel.com
+  template:
+    src: templates/caddy.j2
+    dest: /etc/caddy/conf.d/owntracks.conf
+    owner: caddy
+    group: caddy
+    mode: 0644
+  notify: reload caddy
+- name: set recursive owner permissions on versions directory
+  file:
+    path: /home/opc/
+    owner: opc
+    group: opc
+    mode: 0755

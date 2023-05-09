@@ -1,0 +1,18 @@
+[Unit]
+Description=Owntracks Receiver
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory={{ ansistrano_deploy_to }}/{{ ansistrano_current_dir }}
+ExecStart={{ ansistrano_deploy_to }}/{{ ansistrano_current_dir }}/owntracks-receiver-linux-arm64
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=owntracks-receiver
+
+[Install]
+WantedBy=multi-user.target
