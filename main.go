@@ -38,7 +38,6 @@ type LocationUpdate struct {
 	Monitoring *int      `json:"m,omitempty"`
 }
 
-
 func initDB(filename string) *sql.DB {
 	db, err := sql.Open("sqlite3", filename)
 	if err != nil {
@@ -48,9 +47,33 @@ func initDB(filename string) *sql.DB {
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS location_updates (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		type TEXT,
-		longitude REAL,
+		acc INTEGER,
+		alt INTEGER,
+		batt INTEGER,
+		bs INTEGER,
+		cog INTEGER,
 		latitude REAL,
-		timestamp INTEGER
+		longitude REAL,
+		rad INTEGER,
+		t TEXT,
+		tid TEXT,
+		timestamp INTEGER,
+		vac INTEGER,
+		vel INTEGER,
+		p REAL,
+		poi TEXT,
+		conn TEXT,
+		w TEXT,
+		o TEXT,
+		m TEXT,
+		tag TEXT,
+		topic TEXT,
+		inregions TEXT,
+		inrids TEXT,
+		ssid TEXT,
+		bssid TEXT,
+		created_at TEXT,
+		monitoring INTEGER
 	)`)
 
 	if err != nil {
@@ -98,7 +121,6 @@ func saveLocationUpdate(db *sql.DB, locationUpdate *LocationUpdate) error {
 	)
 	return err
 }
-
 
 func handleLocationUpdate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
