@@ -51,10 +51,15 @@ func TestSaveLocationUpdate(t *testing.T) {
 	var lat, lon float64
 	var time int64
 	var loc_type, tid, topic string
+	var acc, alt, batt, bs, rad, vel, vac int
+	var trigger, conn, ssid, bssid string
+	var poi, tag string
+	var createdAt, monitoringMode int64
+	var inRegions, inRids, p float64
 
 	found := false
 	for rows.Next() {
-		err := rows.Scan(&id, &loc_type, nil, nil, nil, nil, &lat, &lon, nil, nil, &tid, &time, nil, nil, nil, nil, nil, nil, nil, nil, nil, &topic, nil, nil, nil, nil, nil, nil)
+		err := rows.Scan(&id, &loc_type, &acc, &alt, &batt, &bs, &lat, &lon, &rad, &trigger, &tid, &time, &vac, &vel, &p, &poi, &conn, &ssid, &bssid, &createdAt, &monitoringMode, &tag, &topic, &inRegions, &inRids)
 		if err != nil {
 			t.Errorf("Failed to scan row: %s", err)
 		}
@@ -71,4 +76,3 @@ func TestSaveLocationUpdate(t *testing.T) {
 
 	os.Remove("test.db") // Clean up the test database file
 }
-
