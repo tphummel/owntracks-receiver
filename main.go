@@ -6,36 +6,37 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type LocationUpdate struct {
-	Type       string    `json:"_type"`
-	Acc        *int      `json:"acc,omitempty"`
-	Alt        *int      `json:"alt,omitempty"`
-	Batt       *int      `json:"batt,omitempty"`
-	BS         *int      `json:"bs,omitempty"`
-	Cog        *int      `json:"cog,omitempty"`
-	Latitude   float64   `json:"lat"`
-	Longitude  float64   `json:"lon"`
-	Rad        *int      `json:"rad,omitempty"`
-	T          string    `json:"t,omitempty"`
-	TID        string    `json:"tid,omitempty"`
-	Timestamp  int64     `json:"tst"`
-	Vac        *int      `json:"vac,omitempty"`
-	Vel        *int      `json:"vel,omitempty"`
-	P          *float64  `json:"p,omitempty"`
-	POI        *string   `json:"poi,omitempty"`
-	Conn       *string   `json:"conn,omitempty"`
-	Tag        *string   `json:"tag,omitempty"`
-	Topic      string    `json:"topic"`
-	InRegions  *[]string `json:"inregions,omitempty"`
-	InRIDs     *[]string `json:"inrids,omitempty"`
-	SSID       *string   `json:"SSID,omitempty"`
-	BSSID      *string   `json:"BSSID,omitempty"`
-	CreatedAt  *string   `json:"created_at,omitempty"`
-	Monitoring *int      `json:"m,omitempty"`
+	Type       string   `json:"_type"`
+	Acc        *int     `json:"acc,omitempty"`
+	Alt        *int     `json:"alt,omitempty"`
+	Batt       *int     `json:"batt,omitempty"`
+	BS         *int     `json:"bs,omitempty"`
+	COG        *int     `json:"cog,omitempty"`
+	Latitude   float64  `json:"lat"`
+	Longitude  float64  `json:"lon"`
+	Rad        *int     `json:"rad,omitempty"`
+	T          string   `json:"t,omitempty"`
+	TID        string   `json:"tid,omitempty"`
+	Timestamp  int64    `json:"tst"`
+	Vac        *int     `json:"vac,omitempty"`
+	Vel        *int     `json:"vel,omitempty"`
+	P          *float64 `json:"p,omitempty"`
+	POI        *string  `json:"poi,omitempty"`
+	Conn       *string  `json:"conn,omitempty"`
+	Tag        *string  `json:"tag,omitempty"`
+	Topic      string   `json:"topic"`
+	InRegions  []string `json:"inregions,omitempty"`
+	InRIDs     []string `json:"inrids,omitempty"`
+	SSID       *string  `json:"SSID,omitempty"`
+	BSSID      *string  `json:"BSSID,omitempty"`
+	CreatedAt  *string  `json:"created_at,omitempty"`
+	Monitoring *int     `json:"m,omitempty"`
 }
 
 func initDB(filename string) *sql.DB {
@@ -89,33 +90,10 @@ func saveLocationUpdate(db *sql.DB, locationUpdate *LocationUpdate) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(
-		locationUpdate.Type,
-		locationUpdate.Acc,
-		locationUpdate.Alt,
-		locationUpdate.Batt,
-		locationUpdate.BS,
-		locationUpdate.Cog,
-		locationUpdate.Latitude,
-		locationUpdate.Longitude,
-		locationUpdate.Rad,
-		locationUpdate.T,
-		locationUpdate.TID,
-		locationUpdate.Timestamp,
-		locationUpdate.Vac,
-		locationUpdate.Vel,
-		locationUpdate.P,
-		locationUpdate.POI,
-		locationUpdate.Conn,
-		locationUpdate.Tag,
-		locationUpdate.Topic,
-		locationUpdate.InRegions,
-		locationUpdate.InRIDs,
-		locationUpdate.SSID,
-		locationUpdate.BSSID,
-		locationUpdate.CreatedAt,
-		locationUpdate.Monitoring,
-	)
+	inRegionsStr := strings.Join(locationUpdate.InRegions, ",")
+	inRidsStr := strings.Join(locationUpdate.InRIDs, ",")
+
+	_, err = stmt.Exec(locationUpdate.Type, locationUpdate.Acc, locationUpdate.Alt, locationUpdate.Batt, locationUpdate.BS, locationUpdate.COG, locationUpdate.Latitude, locationUpdate.Longitude, locationUpdate.Rad, locationUpdate.T, locationUpdate.TID, locationUpdate.Timestamp, locationUpdate.Vac, locationUpdate.Vel, locationUpdate.P, locationUpdate.POI, locationUpdate.Conn, locationUpdate.Tag, locationUpdate.Topic, inRegionsStr, inRidsStr, locationUpdate.SSID, locationUpdate.BSSID, locationUpdate.CreatedAt, locationUpdate.Monitoring)
 	return err
 }
 

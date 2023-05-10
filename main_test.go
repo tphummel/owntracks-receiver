@@ -2,6 +2,8 @@ package main
 
 import (
 	"os"
+	"reflect"
+	"strings"
 	"testing"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -28,12 +30,31 @@ func TestSaveLocationUpdate(t *testing.T) {
 	defer db.Close()
 
 	locationUpdate := LocationUpdate{
-		Latitude:  12.34,
-		Longitude: 56.78,
-		Type:      "location",
-		Timestamp: 1618859345,
-		TID:       "JJ",
-		Topic:     "owntracks/user/device",
+		Type:       "location",
+		Acc:        intPtr(101),
+		Alt:        intPtr(500),
+		Batt:       intPtr(85),
+		BS:         intPtr(1),
+		COG:        intPtr(180),
+		Latitude:   12.34,
+		Longitude:  56.78,
+		Rad:        intPtr(10),
+		T:          "t",
+		TID:        "JJ",
+		Timestamp:  1618859345,
+		Vac:        intPtr(5),
+		Vel:        intPtr(60),
+		P:          float64Ptr(0.5),
+		POI:        stringPtr("MyPoint"),
+		Conn:       stringPtr("w"),
+		Tag:        stringPtr("tag"),
+		Topic:      "owntracks/user/device",
+		InRegions:  []string{"region1", "region2"},
+		InRIDs:     []string{"1", "2"},
+		SSID:       stringPtr("MySSID"),
+		BSSID:      stringPtr("00:11:22:33:44:55"),
+		CreatedAt:  stringPtr("2023-05-10T04:00:00Z"),
+		Monitoring: intPtr(1),
 	}
 
 	err := saveLocationUpdate(db, &locationUpdate)
@@ -48,23 +69,26 @@ func TestSaveLocationUpdate(t *testing.T) {
 	defer rows.Close()
 
 	var id int
-	var lat, lon float64
+	var lat, lon, p float64
 	var time int64
-	var loc_type, tid, topic string
-	var acc, alt, batt, bs, rad, vel, vac int
+	var createdAt, loc_type, tid, topic string
+	var acc, alt, batt, bs, cog, rad, vel, vac int
 	var trigger, conn, ssid, bssid string
 	var poi, tag string
-	var createdAt, monitoringMode int64
-	var inRegions, inRids, p float64
+	var monitoringMode int64
+	var inRegions, inRids string
 
 	found := false
 	for rows.Next() {
-		err := rows.Scan(&id, &loc_type, &acc, &alt, &batt, &bs, &lat, &lon, &rad, &trigger, &tid, &time, &vac, &vel, &p, &poi, &conn, &ssid, &bssid, &createdAt, &monitoringMode, &tag, &topic, &inRegions, &inRids)
+		err := rows.Scan(&id, &loc_type, &acc, &alt, &batt, &bs, &cog, &lat, &lon, &rad, &trigger, &tid, &time, &vac, &vel, &p, &poi, &conn, &tag, &topic, &inRegions, &inRids, &ssid, &bssid, &createdAt, &monitoringMode)
 		if err != nil {
 			t.Errorf("Failed to scan row: %s", err)
 		}
 
-		if lat == locationUpdate.Latitude && lon == locationUpdate.Longitude && time == locationUpdate.Timestamp && tid == locationUpdate.TID && topic == locationUpdate.Topic {
+		inRegionsList := strings.Split(inRegions, ",")
+		inRidsList := strings.Split(inRids, ",")
+
+		if lat == locationUpdate.Latitude && lon == locationUpdate.Longitude && time == locationUpdate.Timestamp && tid == locationUpdate.TID && topic == locationUpdate.Topic && reflect.DeepEqual(inRegionsList, locationUpdate.InRegions) && reflect.DeepEqual(inRidsList, locationUpdate.InRIDs) {
 			found = true
 			break
 		}
@@ -75,4 +99,17 @@ func TestSaveLocationUpdate(t *testing.T) {
 	}
 
 	os.Remove("test.db") // Clean up the test database file
+}
+
+// Helper functions to create pointers for basic types
+func intPtr(i int) *int {
+	return &i
+}
+
+func float64Ptr(f float64) *float64 {
+	return &f
+}
+
+func stringPtr(s string) *string {
+	return &s
 }
