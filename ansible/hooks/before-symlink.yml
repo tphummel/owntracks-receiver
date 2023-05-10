@@ -15,10 +15,19 @@
     group: caddy
     mode: 0644
   notify: reload caddy
-- name: set recursive owner permissions on versions directory
+- name: set recursive owner permissions on directory
   file:
-    path: /home/opc/
+    path: /home/opc/owntracks-receiver/
     owner: opc
     group: opc
     mode: 0755
     recurse: yes
+- name: Set SELinux file context for owntracks-receiver binary
+  ansible.builtin.sefcontext:
+    target: '/home/opc/owntracks-receiver/current/owntracks-receiver-linux-arm64'
+    setype: 'init_exec_t'
+    state: 'present'
+- name: Apply SELinux file context to owntracks-receiver binary
+  ansible.builtin.command:
+    cmd: 'restorecon -v /home/opc/owntracks-receiver/current/owntracks-receiver-linux-arm64'
+    warn: false
