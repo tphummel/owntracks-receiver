@@ -21,3 +21,4 @@
     owner: opc
     group: opc
     mode: 0755
+    recurse: yes

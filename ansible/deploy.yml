@@ -21,9 +21,10 @@
   roles:
     - role: ansistrano.deploy
       ansistrano_deploy_via: download
-      ansistrano_get_url: https://github.com/tphummel/owntracks-receiver/releases/download/2023-05-09-7b329/owntracks-receiver-linux-arm64
+      ansistrano_release_version: "{{ deploy_version }}"
+      ansistrano_get_url: "https://github.com/tphummel/owntracks-receiver/releases/download/{{ deploy_version }}/owntracks-receiver-linux-arm64"
       ansistrano_download_force_basic_auth: false
-      ansistrano_before_symlink_shared_tasks_file: hooks/before-symlink-shared.yml
+      ansistrano_before_symlink_tasks_file: hooks/before-symlink.yml
   
   handlers:
     - name: reload systemd units
