@@ -10,6 +10,11 @@
     ansistrano_shared_paths: []
     ansistrano_shared_files: []
   tasks:
+    - name: create data directory
+      file:
+        path: /home/opc/data
+        state: directory
+        mode: '0755'
     - name: Ensure shared paths exist
       file:
         path: "{{ ansistrano_deploy_to }}/{{ item }}"
@@ -22,12 +27,16 @@
       ansistrano_deploy_via: download
       ansistrano_get_url: "https://github.com/tphummel/owntracks-receiver/releases/download/{{ ansistrano_release_version }}/owntracks-receiver-linux-arm64"
       ansistrano_download_force_basic_auth: false
-      ansistrano_before_symlink_tasks_file: hooks/before-symlink.yml
+      ansistrano_after_symlink_tasks_file: hooks/after-symlink.yml
   
   handlers:
     - name: reload systemd units
       ansible.builtin.systemd:
         daemon_reload: yes
+    - name: start owntracks-receiver unit
+      ansible.builtin.systemd:
+        name: owntracks-receiver
+        state: started
     - name: reload caddy
       ansible.builtin.systemd:
         name: caddy
