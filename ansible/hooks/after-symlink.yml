@@ -6,7 +6,10 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload systemd units
+  notify: 
+    - reload systemd units
+    - start owntracks-receiver unit
+
 - name: Create Caddy config for owntracks.lab.tomhummel.com
   template:
     src: templates/caddy.j2
@@ -28,6 +31,7 @@
     setype: 'init_exec_t'
     state: 'present'
 - name: Apply SELinux file context to owntracks-receiver binary
+  become: yes
   ansible.builtin.command:
     cmd: 'restorecon -v /home/opc/owntracks-receiver/current/owntracks-receiver-linux-arm64'
-    warn: false
+
