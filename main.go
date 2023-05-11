@@ -99,6 +99,7 @@ func saveLocationUpdate(db *sql.DB, locationUpdate *LocationUpdate) error {
 
 func handleLocationUpdate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
+		fmt.Printf("Received non-POST request: %s %s\n", r.Method, r.URL.Path)
 		http.Error(w, "Method not supported", http.StatusMethodNotAllowed)
 		return
 	}
@@ -106,12 +107,14 @@ func handleLocationUpdate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	var locationUpdate LocationUpdate
 	err := json.NewDecoder(r.Body).Decode(&locationUpdate)
 	if err != nil {
+		fmt.Printf("Failed to decode JSON: %s\n", err)
 		http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
 		return
 	}
 
 	err = saveLocationUpdate(db, &locationUpdate)
 	if err != nil {
+		fmt.Printf("Failed to save location update: %s\n", err)
 		http.Error(w, "Failed to save location update", http.StatusInternalServerError)
 		return
 	}
