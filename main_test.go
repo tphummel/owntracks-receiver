@@ -53,7 +53,7 @@ func TestSaveLocationUpdate(t *testing.T) {
 		InRIDs:     []string{"1", "2"},
 		SSID:       stringPtr("MySSID"),
 		BSSID:      stringPtr("00:11:22:33:44:55"),
-		CreatedAt:  stringPtr("2023-05-10T04:00:00Z"),
+		CreatedAt:  int64Ptr(1618859345),
 		Monitoring: intPtr(1),
 	}
 
@@ -103,6 +103,10 @@ func TestSaveLocationUpdate(t *testing.T) {
 
 // Helper functions to create pointers for basic types
 func intPtr(i int) *int {
+	return &i
+}
+
+func int64Ptr(i int64) *int64 {
 	return &i
 }
 

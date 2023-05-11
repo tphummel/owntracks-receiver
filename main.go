@@ -35,7 +35,7 @@ type LocationUpdate struct {
 	InRIDs     []string `json:"inrids,omitempty"`
 	SSID       *string  `json:"SSID,omitempty"`
 	BSSID      *string  `json:"BSSID,omitempty"`
-	CreatedAt  *string  `json:"created_at,omitempty"`
+	CreatedAt  *int64   `json:"created_at,omitempty"`
 	Monitoring *int     `json:"m,omitempty"`
 }
 
