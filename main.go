@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -123,6 +124,13 @@ func handleLocationUpdate(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func statusHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	timestamp := time.Now().Format(time.RFC3339)
+	status := "Healthy"
+	fmt.Fprintf(w, "Status: %s, Timestamp: %s", status, timestamp)
+}
+
 func main() {
 	db := initDB("/home/opc/data/owntracks.db")
 	defer db.Close()
@@ -130,6 +138,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		handleLocationUpdate(db, w, r)
 	})
+	http.HandleFunc("/status", statusHandler)
 
 	log.Println("Starting server on :8080")
 	err := http.ListenAndServe(":8080", nil)
