@@ -136,9 +136,12 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/status" {
+			statusHandler(w, r)
+			return
+		}
 		handleLocationUpdate(db, w, r)
 	})
-	http.HandleFunc("/status", statusHandler)
 
 	log.Println("Starting server on :8080")
 	err := http.ListenAndServe(":8080", nil)
