@@ -8,7 +8,7 @@
     mode: 0644
   notify: 
     - reload systemd units
-    - start owntracks-receiver unit
+    - restart owntracks-receiver unit
 
 - name: Create Caddy config for owntracks.lab.tomhummel.com
   template:
